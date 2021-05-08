@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!--组件扫描器-->
+	<context:component-scan base-package="cn.wolfcode.crm"/>
+	<!--引入properties文件-->
+	<context:property-placeholder location="classpath:db.properties" system-properties-mode="NEVER"/>
+
+	<!--配置druid连接池-->
+	<bean class="com.alibaba.druid.pool.DruidDataSource" id="dataSource" init-method="init" destroy-method="close">
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+
+	<!--配置SqlSessionFactoryBean-->
+	<bean class="org.mybatis.spring.SqlSessionFactoryBean" id="factory">
+		<!--连接池-->
+		<property name="dataSource" ref="dataSource"/>
+		<!--mapper.xml文件-->
+		<property name="mapperLocations" value="classpath:cn/wolfcode/crm/mapper/*Mapper.xml"/>
+		<!--myBatis配置文件-->
+		<property name="configLocation" value="classpath:mybatis.xml"/>
+		<!--别名-->
+		<property name="typeAliasesPackage" value="cn.wolfcode.crm.domain"/>
+	</bean>
+
+	<!--扫描mapper接口-->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!--mapper接口所在的包-->
+		<property name="basePackage" value="cn.wolfcode.crm.mapper"/>
+	</bean>
+
+	<!--事务管理器-->
+	<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+		<!--配置连接池-->
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<!--增强-->
+	<tx:advice id="transactionInterceptor" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true" propagation="SUPPORTS"/>
+			<tx:method name="list*" read-only="true" propagation="SUPPORTS"/>
+			<tx:method name="select*" read-only="true" propagation="SUPPORTS"/>
+			<tx:method name="query*" read-only="true" propagation="SUPPORTS"/>
+			<tx:method name="*" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!--系统日志-->
+	<bean class="cn.wolfcode.crm.util.SystemLogUtil" id="logUtil"/>
+
+	<!--AOP-->
+	<aop:config>
+		<aop:pointcut id="pc" expression="execution(* cn.wolfcode.crm.service.*Service.*(..))"/>
+		<aop:advisor advice-ref="transactionInterceptor" pointcut-ref="pc"/>
+		<aop:aspect ref="logUtil">
+			<aop:after method="writeLog" pointcut-ref="pc"/>
+		</aop:aspect>
+	</aop:config>
+
+</beans>

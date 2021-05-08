@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wolfcode.crm.mapper.RoleMapper">
+
+    <resultMap id="BaseResultMap" type="cn.wolfcode.crm.domain.Role">
+      <id column="id" property="id" />
+      <result column="sn" property="sn" />
+      <result column="name" property="name" />
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey">
+      delete from role
+      where id = #{id}
+    </delete>
+
+    <delete id="deleteRelationWithPermission">
+        delete from role_permission
+        where role_id = #{roleId}
+    </delete>
+    <delete id="deleteRelationWithMenu">
+        delete from role_menu
+        where role_id = #{roleId}
+    </delete>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+      insert into role (sn, name)
+      values (#{sn}, #{name})
+    </insert>
+
+    <insert id="insertRelationWithPermission">
+        insert into role_permission(role_id,permission_id)
+        values(#{roleId},#{permissionId})
+    </insert>
+
+    <insert id="insertRelationWithMenu">
+        insert into role_menu(role_id,menu_id)
+        values(#{roleId},#{menuId})
+    </insert>
+
+    <update id="updateByPrimaryKey">
+      update role
+      set sn = #{sn},
+        name = #{name}
+      where id = #{id}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+      select id, sn, name
+      from role
+      where id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+      select id, sn, name
+      from role
+    </select>
+
+    <select id="queryCount" resultType="_int">
+      select count(id)
+      from role
+    </select>
+
+    <select id="queryList" resultMap="BaseResultMap">
+      select id, sn, name
+      from role
+      limit #{start},#{rows}
+    </select>
+
+    <select id="selectByEmployeeId" resultType="long">
+        select role_id
+        from employee_role
+        where employee_id = #{employeeId}
+    </select>
+
+    <select id="selectNameByEmployeeId" resultType="string">
+        select r.name
+        from role r join employee_role er on er.role_id = r.id
+        where er.employee_id = #{employeeId}
+    </select>
+
+</mapper>

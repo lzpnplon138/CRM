@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wolfcode.crm.mapper.EmployeeMapper">
+    <resultMap id="BaseResultMap" type="cn.wolfcode.crm.domain.Employee">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="realname" property="realname"/>
+        <result column="password" property="password"/>
+        <result column="tel" property="tel"/>
+        <result column="email" property="email"/>
+        <result column="hireDate" property="hireDate"/>
+        <result column="state" property="state"/>
+        <result column="admin" property="admin"/>
+        <association property="dept" columnPrefix="d_" javaType="cn.wolfcode.crm.domain.Department">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+        </association>
+    </resultMap>
+
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into employee (username, realname, password, tel, email, dept_id, hireDate,
+          state, admin)
+        values (#{username}, #{realname}, #{password}, #{tel}, #{email}, #{dept.id}, #{hireDate},
+          #{state}, #{admin})
+    </insert>
+
+    <insert id="insertRelationWithRole">
+        insert into employee_role(employee_id,role_id)
+        values(#{employeeId},#{roleId})
+    </insert>
+
+
+    <update id="updateByPrimaryKey">
+        update employee
+        set username = #{username},
+          realname = #{realname},
+          tel = #{tel},
+          email = #{email},
+          dept_id = #{dept.id},
+          hireDate = #{hireDate},
+          admin = #{admin}
+        where id = #{id}
+    </update>
+
+    <update id="changeState">
+        update employee
+        set state = state^1
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRelationWithRole">
+        delete from employee_role
+        where employee_id = #{employeeId}
+    </delete>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        <include refid="base_column"/>
+        <include refid="base_table"/>
+        where e.id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        <include refid="base_column"/>
+        <include refid="base_table"/>
+    </select>
+
+    <select id="queryCount" resultType="_int">
+        select count(e.id)
+        <include refid="base_table"/>
+        <include refid="base_where"/>
+    </select>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        <include refid="base_column"/>
+        <include refid="base_table"/>
+        <include refid="base_where"/>
+        order by ${sort} ${order}
+        limit #{start},#{rows}
+    </select>
+
+    <select id="selectByUsername" resultType="employee">
+        select id,username,password,admin
+        from employee
+        where username=#{username}
+    </select>
+
+    <sql id="base_column">
+        select
+              e.id,e.username,e.realname,e.tel, e.email,  e.hireDate, e.state, e.admin,
+              d.id d_id,d.name d_name
+    </sql>
+
+    <sql id="base_table">
+        from employee e left join department d on e.dept_id = d.id
+    </sql>
+
+    <sql id="base_where">
+        <where>
+            <if test="keyword!=null">
+                and (e.username like concat('%',#{keyword},'%') or e.tel like concat('%',#{keyword},'%'))
+            </if>
+            <if test="minDate!=null">
+                and e.hireDate &gt;= #{minDate}
+            </if>
+            <if test="maxDate!=null">
+                and e.hireDate &lt;= #{maxDate}
+            </if>
+            <if test="deptId>0">
+                and e.dept_id = #{deptId}
+            </if>
+        </where>
+    </sql>
+
+
+</mapper>

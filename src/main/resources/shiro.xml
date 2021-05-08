@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--定义凭证匹配器-->
+    <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher" id="credentialsMatcher">
+        <property name="hashIterations" value="2"/>
+        <property name="hashAlgorithmName" value="md5"/>
+    </bean>
+
+    <!--缓存管理器-->
+    <bean class="org.apache.shiro.cache.ehcache.EhCacheManager" id="cacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:shiro-ehcache.xml"/>
+    </bean>
+
+    <!--自定义realm-->
+    <bean class="cn.wolfcode.crm.shiro.MyRealm" id="myRealm">
+        <property name="credentialsMatcher" ref="credentialsMatcher"/>
+    </bean>
+    
+    <!--自定义认证过滤器-->
+    <bean class="cn.wolfcode.crm.shiro.MyAuthc" id="myAuthc"/>
+    
+    <!--securityManager-->
+    <bean class="org.apache.shiro.web.mgt.DefaultWebSecurityManager" id="securityManager">
+        <property name="realm" ref="myRealm"/>
+        <property name="cacheManager" ref="cacheManager"/>
+    </bean>
+
+    <!--shiro过滤器(id必须和web.xml的name一致)-->
+    <bean class="org.apache.shiro.spring.web.ShiroFilterFactoryBean" id="shiroFilter">
+        <!--配置安全管理器-->
+        <property name="securityManager" ref="securityManager"/>
+        <!--设置登录地址-->
+        <property name="loginUrl" value="/login.do"/>
+        <!--配置登录成功后访问的地址-->
+        <property name="successUrl" value="/main.do"/>
+        <!--配置自定义认证过滤器-->
+        <property name="filters">
+            <map>
+                <entry key="authc" value-ref="myAuthc"/>
+            </map>
+        </property>
+        <!--对url配置过滤器-->
+        <property name="filterChainDefinitions">
+            <value>
+                <!--匿名访问-->
+                /static/**=anon
+                /favicon.ico=anon
+                /login.jsp=anon
+                /login.jsp=anon
+                /favicon.ico=anon
+                <!--注销-->
+                /logout.do=logout
+                <!--登录才能访问-->
+                /**=authc
+            </value>
+        </property>
+    </bean>
+
+    <!-- 开启aop，对类代理 -->
+    <aop:config proxy-target-class="true"></aop:config>
+    <!-- 开启shiro注解支持 -->
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+
+</beans>

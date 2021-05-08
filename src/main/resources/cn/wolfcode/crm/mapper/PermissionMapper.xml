@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wolfcode.crm.mapper.PermissionMapper">
+
+      <resultMap id="BaseResultMap" type="cn.wolfcode.crm.domain.Permission">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="resource" property="resource" />
+      </resultMap>
+
+      <delete id="deleteByPrimaryKey">
+        delete from permission
+        where id = #{id}
+      </delete>
+
+      <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into permission (name, resource)
+        values (#{name}, #{resource})
+      </insert>
+
+      <select id="selectAll" resultMap="BaseResultMap">
+        select id, name, resource
+        from permission
+      </select>
+
+    <select id="queryCount" resultType="_int">
+        select count(id)
+        from permission
+    </select>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        select id, name, resource
+        from permission
+        limit #{start},#{rows}
+    </select>
+
+    <select id="selectAllResource" resultType="string">
+        select resource
+        from permission
+    </select>
+
+    <select id="selectByRoleId" resultMap="BaseResultMap">
+        select p.id, p.name, p.resource
+        from permission p join role_permission rp on p.id = rp.permission_id
+        where rp.role_id = #{roleId}
+    </select>
+
+    <select id="selectResourceByEmployeeId" resultType="string">
+        select p.resource
+        from permission p join role_permission rp on p.id = rp.permission_id
+        join employee_role er on er.role_id = rp.role_id
+        where er.employee_id = #{employeeId}
+    </select>
+
+</mapper>

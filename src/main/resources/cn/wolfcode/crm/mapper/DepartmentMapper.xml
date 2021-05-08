@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wolfcode.crm.mapper.DepartmentMapper">
+
+    <resultMap id="BaseResultMap" type="cn.wolfcode.crm.domain.Department">
+      <id column="id" property="id" />
+      <result column="sn" property="sn" />
+      <result column="name" property="name" />
+      <result column="state" property="state" />
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey">
+      delete from department
+      where id = #{id}
+    </delete>
+
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+      insert into department (sn, name, state)
+      values (#{sn}, #{name}, #{state})
+    </insert>
+
+    <update id="changeState">
+      update department
+      set state = state^1
+      where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKey">
+      update department
+      set sn = #{sn},
+        name = #{name}
+      where id = #{id}
+    </update>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+      select id, sn, name, state
+      from department
+      where id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+      select id, sn, name, state
+      from department
+    </select>
+
+    <select id="queryCount" resultType="_int">
+      select count(id)
+      from department
+    </select>
+
+    <select id="queryList" resultMap="BaseResultMap">
+      select id, sn, name, state
+      from department
+      limit #{start},#{rows}
+    </select>
+
+    <select id="selectByName" resultType="department">
+      select id
+      from department
+      where name=#{name}
+    </select>
+
+</mapper>

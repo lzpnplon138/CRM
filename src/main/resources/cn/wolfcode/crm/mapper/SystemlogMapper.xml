@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wolfcode.crm.mapper.SystemLogMapper">
+  
+  <resultMap id="BaseResultMap" type="cn.wolfcode.crm.domain.SystemLog">
+      <id column="id" property="id" />
+      <result column="opTime" property="opTime" />
+      <result column="opIp" property="opIp" />
+      <result column="function" property="function" />
+      <result column="params" property="params" />
+      <association property="opUser" javaType="Employee" columnPrefix="u_">
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+      </association>
+  </resultMap>
+  
+  <delete id="deleteByPrimaryKey">
+      delete from systemlog
+      where id = #{id}
+  </delete>
+  
+  <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+      insert into systemlog (opUser_id, opTime, opIp, function, params)
+      values (#{opUser.id}, #{opTime}, #{opIp}, #{function}, #{params})
+  </insert>
+  
+  <update id="updateByPrimaryKey">
+      update systemlog
+      set opUser_id = #{opUser.id},
+        opTime = #{opTime},
+        opIp = #{opIp},
+        function = #{function},
+        params = #{params}
+      where id = #{id}
+  </update>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+      <include refid="base_column"/>
+      <include refid="base_table"/>
+      where log.id = #{id}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    <include refid="base_column"/>
+    <include refid="base_table"/>
+  </select>
+
+  <select id="queryCount" resultType="_int">
+    select count(log.id)
+    <include refid="base_table"/>
+  </select>
+
+  <select id="queryList" resultMap="BaseResultMap">
+    <include refid="base_column"/>
+    <include refid="base_table"/>
+    limit #{start},#{rows}
+  </select>
+
+  <sql id="base_column">
+      select
+          log.id, log.opTime, log.opIp, log.function, log.params,
+          u.id u_id, u.username u_username
+  </sql>
+  <sql id="base_table">
+      from systemlog log left join employee u on log.opUser_id = u.id
+  </sql>
+
+
+</mapper>
