@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.List;
 
 @Service
 public class SystemLogServiceImpl implements ISystemLogService {
@@ -21,15 +20,6 @@ public class SystemLogServiceImpl implements ISystemLogService {
         systemLogMapper.insert(record);
     }
 
-    @Override
-    public SystemLog get(Long id) {
-        return systemLogMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public List<SystemLog> list() {
-        return systemLogMapper.selectAll();
-    }
 
     @Override
     public PageResult query(QueryObject qo) {

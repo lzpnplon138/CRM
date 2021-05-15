@@ -17,18 +17,21 @@ public class RoleController {
     @Autowired
     private IRoleService roleService;
 
+    //角色视图
     @RequiresPermissions(value = {"role:view","角色视图"},logical = Logical.OR)
     @RequestMapping("/view")
     public String view() {
         return "role";
     }
 
+    //返回所有角色
     @ResponseBody
     @RequestMapping("/list")
     public Object list() {
         return roleService.list();
     }
 
+    //角色分页数据
     @RequiresPermissions(value = {"role:query","角色列表"},logical = Logical.OR)
     @ResponseBody
     @RequestMapping("/query")
@@ -36,6 +39,7 @@ public class RoleController {
         return roleService.query(qo);
     }
 
+    // 新增/更新
     @RequiresPermissions(value = {"role:saveOrUpdate","角色保存/更新"},logical = Logical.OR)
     @ResponseBody
     @RequestMapping("/saveOrUpdate")
@@ -50,6 +54,7 @@ public class RoleController {
         return result;
     }
 
+    //返回该员工对应的角色
     @ResponseBody
     @RequestMapping("/selectByEmployeeId")
     public Object selectByEmployeeId(Long employeeId) {

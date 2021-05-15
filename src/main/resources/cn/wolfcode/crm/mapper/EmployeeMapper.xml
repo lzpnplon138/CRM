@@ -85,6 +85,12 @@
         where username=#{username}
     </select>
 
+    <select id="selectAllByQuertyObject" resultMap="BaseResultMap">
+        <include refid="base_column"/>
+        <include refid="base_table"/>
+        <include refid="base_where"/>
+    </select>
+
     <sql id="base_column">
         select
               e.id,e.username,e.realname,e.tel, e.email,  e.hireDate, e.state, e.admin,

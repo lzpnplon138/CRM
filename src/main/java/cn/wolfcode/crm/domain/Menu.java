@@ -12,8 +12,10 @@ import java.util.List;
 public class Menu {
     private Long id;
 
+    //菜单名称
     private String text;
 
+    //url路径
     private String url;
 
     //上级菜单

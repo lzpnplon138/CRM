@@ -17,18 +17,21 @@ public class DepartmentController {
     @Autowired
     private IDepartmentService departmentService;
 
+    //返回部门视图
     @RequiresPermissions(value = {"department:view","部门视图"},logical = Logical.OR)
     @RequestMapping("/view")
     public String view() {
         return "department";
     }
 
+    //返回所有部门对象的集合
     @ResponseBody
     @RequestMapping("/list")
     public Object list() {
         return departmentService.list();
     }
 
+    //部门分页数据
     @RequiresPermissions(value = {"department:query","部门列表"},logical = Logical.OR)
     @ResponseBody
     @RequestMapping("/query")
@@ -36,6 +39,7 @@ public class DepartmentController {
         return departmentService.query(qo);
     }
 
+    // 新增/更新
     @RequiresPermissions(value = {"department:saveOrUpdate","部门保存/更新"},logical = Logical.OR)
     @ResponseBody
     @RequestMapping("/saveOrUpdate")
@@ -50,6 +54,7 @@ public class DepartmentController {
         return result;
     }
 
+    // 启用/禁用
     @ResponseBody
     @RequestMapping("/changeState")
     public Object changeState(Long id) {
@@ -63,6 +68,7 @@ public class DepartmentController {
         return result;
     }
 
+    //编辑时验证部门名称
     @ResponseBody
     @RequestMapping("/validateName")
     public Object validateName(String name, Long id) {

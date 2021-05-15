@@ -11,8 +11,10 @@ import java.util.List;
 public class Role {
     private Long id;
 
+    //角色编码
     private String sn;
 
+    //角色名称
     private String name;
 
     //权限

@@ -103,6 +103,8 @@
             $("#tr_password").show();
             //开启密码框验证
             $("#passwordbox").passwordbox("enableValidation");
+            //超管默认"否"
+            $("#admin").combobox("select", "0");
             //打开弹出框
             myDialog.dialog("setTitle", "新增员工");
             myDialog.dialog("open");
@@ -205,7 +207,7 @@
 
         //导出
         export: function () {
-            window.open("/employee/export.do");
+            window.open("/employee/export.do?" + $("#queryForm").serialize());
         },
 
         //导入按钮,单击打开上传窗口
@@ -254,7 +256,7 @@
                 var formData = new FormData($("#importFileForm")[0]);
                 //调用apicontroller后台action方法，将form数据传递给后台处理。contentType必须设置为false,否则chrome和firefox不兼容
                 $.ajax({
-                    url: "/employee/importXlsx.do",
+                    url: "/employee/importFile.do",
                     type: 'POST',
                     data: formData,
                     async: false,
@@ -267,15 +269,11 @@
                             //上传成功后将控件内容清空，并显示上传成功信息
                             $("#file").val(null);
                             $("#uploadInfo").html("<span style='color:Red'>上传成功</span>");
-                        }else{
+                        } else {
                             //上传失败后
                             $("#uploadInfo").html("<span style='color:Red'>上传失败,请检查文件内容是否符合规范</span>");
                         }
                     }
-                   /* error: function (data) {
-                        //上传失败时显示上传失败信息
-                        $("#uploadInfo").html("<span style='color:Red'>" + data.msg + "</span>");
-                    }*/
                 });
             }
             else {

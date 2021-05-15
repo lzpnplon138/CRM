@@ -8,6 +8,7 @@
 
     <script>
         $(function () {
+
             //登陆
             $("#login_btn").click(function () {
                 $.post("/login.do", $("#loginform").serialize(), function (data) {
@@ -22,9 +23,9 @@
             });
 
             //重置
-            function reset() {
-
-            }
+            $("#reset_btn").click(function () {
+                $("[type='text'],[type='password']").val("");
+            });
 
         });
     </script>
@@ -39,7 +40,7 @@
             <p><input type="password" name="password" value="1" placeholder="密码"></p>
             <p class="submit">
                 <input type="button" value="登录" id="login_btn">
-                <input type="button" value="重置" onclick="reset()">
+                <input type="button" value="重置" id="reset_btn">
             </p>
         </form>
     </div>

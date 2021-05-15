@@ -19,24 +19,25 @@
         <a class="easyui-linkbutton" iconCls="icon-edit" plain="true" data-cmd="edit">编辑</a>
     </shiro:hasPermission>
     <a id="state_btn" class="easyui-linkbutton" iconCls="icon-remove" plain="true" data-cmd="changeState">离职</a>
-
-
-    <input id="keyword" class="easyui-textbox" prompt="用户名/电话"/>
-    入职时间:
-    <input id="minDate" class="easyui-datebox" prompt="起始时间" editable="false"/>至
-    <input id="maxDate" class="easyui-datebox" prompt="结束时间" editable="false"/>
-    <input id="deptId" class="easyui-combobox" data-options="panelHeight:'auto',url:'/department/list.do',
-                        valueField:'id',textField:'name',editable:false,prompt:'所属部门'">
-    <a class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="query();">查询</a>
-
-
     <a class="easyui-linkbutton" iconCls="icon-cut" plain="true" data-cmd="import">导入</a>
     <a class="easyui-linkbutton" iconCls="icon-cut" plain="true" data-cmd="export">导出</a>
+
+    <form id="queryForm" method="post">
+        <input id="keyword" name="keyword" class="easyui-textbox" prompt="用户名/电话"/>
+        入职时间:
+        <input id="minDate" name="minDate" class="easyui-datebox" prompt="起始时间" editable="false"/>至
+        <input id="maxDate" name="maxDate" class="easyui-datebox" prompt="结束时间" editable="false"/>
+        <input id="deptId" name="deptId" class="easyui-combobox" data-options="panelHeight:'auto',url:'/department/list.do',
+                        valueField:'id',textField:'name',editable:false,prompt:'所属部门'">
+        <a class="easyui-linkbutton" iconCls="icon-search" plain="true" data-cmd="query">查询</a>
+    </form>
+
+
 </div>
 
 <%--上传窗口--%>
 <div id="import">
-    <form id="importFileForm" action="/employee/importXlsx.do" method="post" enctype="multipart/form-data">
+    <form id="importFileForm" action="/employee/importFile.do" method="post" enctype="multipart/form-data">
         <table style="margin:5px;height:70px;">
             <tr>
                 <td colspan="4">
@@ -107,7 +108,7 @@
             </tr>
             <tr>
                 <td>是否管理员:</td>
-                <td><input name="admin" class="easyui-combobox" data-options="panelHeight:'auto',
+                <td><input id="admin" name="admin" class="easyui-combobox" data-options="panelHeight:'auto',
                         data:[{value:'1',text:'是'},{value:'0',text:'否'}],
                         valueField:'value',textField:'text', editable:false"></td>
             </tr>

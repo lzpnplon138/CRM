@@ -14,11 +14,7 @@ public class SystemLogUtil {
     //保存日志
     public void writeLog(JoinPoint joinPoint) {
         //日志的service不记录(避免死循环)
-        if(joinPoint.getTarget() instanceof ISystemLogService){
-            return;
-        }
-        //文件上传时候特殊处理
-        if("importXlsx".equals(joinPoint.getSignature().getName())){
+        if (joinPoint.getTarget() instanceof ISystemLogService) {
             return;
         }
 
@@ -30,10 +26,17 @@ public class SystemLogUtil {
         //登录IP
         log.setOpIp(UserContext.getRequest().getRemoteAddr());
         //功能
-        String function = joinPoint.getTarget().getClass().getName() + ":" + joinPoint.getSignature().getName();
-        log.setFunction(function);
+        String ClzName = joinPoint.getTarget().getClass().getName();
+        String MethodName = joinPoint.getSignature().getName();
+        log.setFunction(ClzName + ":" + MethodName);
         //参数(json)
-        log.setParams(JSONUtil.toJSON(joinPoint.getArgs()));
+        //没有参数或者文件上传的时候,把参数设置为空字符串
+        Object[] args = joinPoint.getArgs();
+        if (args.length == 0 || "importFile".equals(MethodName)) {
+            log.setParams("");
+        } else {
+            log.setParams(JSONUtil.toJSON(args));
+        }
 
         //保存到数据库
         logService.save(log);

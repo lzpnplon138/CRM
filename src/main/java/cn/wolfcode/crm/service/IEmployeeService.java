@@ -19,34 +19,38 @@ public interface IEmployeeService {
     PageResult query(QueryObject qo);
 
     /**
-     * 验证用户名是否存在
-     * @param username
+     * 编辑时,验证员工的名称
+     * 新增操作时不能与已有员工名称重复,
+     * 更新操作可以和原来的员工名称相同,但不能与其他已有员工名称相同
+     * @param username  员工名称
+     * @param id  员工id
      * @return
      */
     boolean validateUsername(String username,Long id);
 
     /**
-     * 改变员工状态
-     * @param id
+     * 改变员工状态(在职/离职)
+     * @param id 员工id
      */
     void changeState(Long id);
 
     /**
      * 根据用户名查询用户
-     * @param username
+     * @param username 用户名
      * @return
      */
     Employee selectByUsername(String username);
 
     /**
-     * 从数据库中导出数据到Xlsx
+     * 从数据库中导出数据给用户
      * @return
+     * @param qo
      */
-    Workbook getXlsx();
+    Workbook export(QueryObject qo);
 
     /**
-     * 导入Xlsx文件的数据到数据库中
-     * @param wb
+     * 导入上传的xls/xlsx文件的数据到数据库中
+     * @param file 上传的文件
      */
-    void importXlsx(MultipartFile file) throws IOException;
+    void importFile(MultipartFile file) throws IOException;
 }

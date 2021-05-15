@@ -9,7 +9,6 @@ import cn.wolfcode.crm.query.QueryObject;
 import cn.wolfcode.crm.service.IEmployeeService;
 import cn.wolfcode.crm.util.PageResult;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.format.CellFormatType;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.crypto.hash.Md5Hash;
@@ -19,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -90,20 +90,21 @@ public class EmployeeServiceImpl implements IEmployeeService {
     }
 
     @Override
-    public Workbook getXlsx() {
+    public Workbook export(QueryObject qo) {
+        //查询员工数据(有过滤条件)
+        List<Employee> list = employeeMapper.selectAllByQuertyObject(qo);
 
-        //创建xlsx文件
+        //创建xlsx工作簿
         Workbook wb = new XSSFWorkbook();
 
         //日期单元格格式
         CreationHelper createHelper = wb.getCreationHelper();
         CellStyle dateStyle = wb.createCellStyle();
-        dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy-MM-dd"));
+        dateStyle.setDataFormat(createHelper.createDataFormat().getFormat("yyyy/MM/dd"));
 
-        //创建工作簿
-        Sheet sheet = wb.createSheet("sheet1");
-        //查询员工数据
-        List<Employee> list = employeeMapper.selectAll();
+        //创建表单
+        Sheet sheet = wb.createSheet();
+
         //创建第一行
         Row row = sheet.createRow(0);
 
@@ -121,26 +122,49 @@ public class EmployeeServiceImpl implements IEmployeeService {
             //从第二行开始录入数据
             row = sheet.createRow(i + 1);
             Employee e = list.get(i);
+            //用户名
             row.createCell(0).setCellValue(e.getUsername());
-            row.createCell(1).setCellValue(e.getRealname());
-            row.createCell(2).setCellValue(e.getTel());
-            row.createCell(3).setCellValue(e.getEmail());
-            if (e.getDept() != null) {
-                row.createCell(4).setCellValue(e.getDept().getName());
+            //真实姓名
+            String realname = e.getRealname();
+            if (realname != null) {
+                row.createCell(1).setCellValue(realname);
+            }
+            //电话
+            String tel = e.getTel();
+            if (tel != null) {
+                row.createCell(2).setCellValue(tel);
+            }
+            //邮箱
+            String email = e.getEmail();
+            if (email != null) {
+                row.createCell(3).setCellValue(email);
+            }
+            //部门名称
+            Department dept = e.getDept();
+            if (dept != null) {
+                row.createCell(4).setCellValue(dept.getName());
             }
 
-            //日期单元格
+            //设置日期单元格格式
             Cell date = row.createCell(5);
             date.setCellStyle(dateStyle);
-            date.setCellValue(e.getHireDate());
+            //日期
+            Date hireDate = e.getHireDate();
+            if (hireDate != null) {
+                date.setCellValue(hireDate);
+            }
             //状态
-            if (e.getState()) {
-                row.createCell(6).setCellValue("在职");
-            } else {
-                row.createCell(6).setCellValue("离职");
+            Boolean state = e.getState();
+            if (state != null) {
+                if (state) {
+                    row.createCell(6).setCellValue("在职");
+                } else {
+                    row.createCell(6).setCellValue("离职");
+                }
             }
             //是否超管
-            if (e.getAdmin()) {
+            Boolean admin = e.getAdmin();
+            if (admin) {
                 row.createCell(7).setCellValue("是");
             } else {
                 row.createCell(7).setCellValue("否");
@@ -150,7 +174,7 @@ public class EmployeeServiceImpl implements IEmployeeService {
     }
 
     @Override
-    public void importXlsx(MultipartFile file) throws IOException {
+    public void importFile(MultipartFile file) throws IOException {
         Workbook wb = null;
         //判断文件类型
         if (file.getContentType().endsWith(".ms-excel")) {
@@ -161,47 +185,73 @@ public class EmployeeServiceImpl implements IEmployeeService {
             wb = new XSSFWorkbook(file.getInputStream());
         }
 
-        //获取工作簿
+        //获取表单
         Sheet sheet = wb.getSheet("sheet1");
         //获取总行数
         int rowNum = sheet.getLastRowNum();
         //迭代获取每一行(第一行不要,因为是列标题)
         for (int i = 1; i <= rowNum; ++i) {
             Row row = sheet.getRow(i);
-            //没写用户名直接跳过
+            //没写用户名,直接跳过这行数据
             Cell cell = row.getCell(0);
             if (cell == null) {
                 continue;
             }
-
             Employee employee = new Employee();
             //用户名
             employee.setUsername(cell.getStringCellValue());
             //真实姓名
-            employee.setRealname(row.getCell(1).getStringCellValue());
+            cell = row.getCell(1);
+            if (cell != null) {
+                employee.setRealname(cell.getStringCellValue());
+            }
             //密码
-            employee.setPassword("假密码");
+            cell = row.getCell(2);
+            if (cell != null) {
+                //先对密码加密
+                String password = new Md5Hash(cell.getStringCellValue(), employee.getUsername(), 2).toString();
+                employee.setRealname(password);
+            }
             //电话
-            employee.setTel(row.getCell(2).getStringCellValue());
+            cell = row.getCell(3);
+            if (cell != null) {
+                employee.setTel(cell.getStringCellValue());
+            }
             //邮箱
-            employee.setEmail(row.getCell(3).getStringCellValue());
+            cell = row.getCell(4);
+            if (cell != null) {
+                employee.setEmail(cell.getStringCellValue());
+            }
             //部门
-            Department dept = departmentMapper.selectByName(row.getCell(4).getStringCellValue());
-            employee.setDept(dept);
+            cell = row.getCell(5);
+            if (cell != null) {
+                Department dept = departmentMapper.selectByName(cell.getStringCellValue());
+                employee.setDept(dept);
+            }
             //入职时间
-            employee.setHireDate(row.getCell(5).getDateCellValue());
+            cell = row.getCell(6);
+            if (cell != null) {
+                employee.setHireDate(cell.getDateCellValue());
+            }
             //状态
-            if ("在职".equals(row.getCell(6).getStringCellValue())) {
-                employee.setState(true);
-            } else if ("离职".equals(row.getCell(6).getStringCellValue())) {
-                employee.setState(false);
+            cell = row.getCell(7);
+            if (cell != null) {
+                String state = cell.getStringCellValue();
+                if ("离职".equals(state)) {
+                    employee.setState(false);
+                } else {
+                    employee.setState(true);
+                }
             }
             //是否超管
-            String admin = row.getCell(7).getStringCellValue();
-            if ("是".equals(row.getCell(7).getStringCellValue())) {
-                employee.setAdmin(true);
-            } else if ("否".equals(row.getCell(7).getStringCellValue())) {
-                employee.setAdmin(false);
+            cell = row.getCell(8);
+            if (cell != null) {
+                String admin = cell.getStringCellValue();
+                if ("是".equals(admin)) {
+                    employee.setAdmin(true);
+                } else {
+                    employee.setAdmin(false);
+                }
             }
             //保存到数据库中
             employeeMapper.insert(employee);

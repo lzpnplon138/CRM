@@ -16,24 +16,6 @@ public class MenuServiceImpl implements IMenuService {
     @Autowired
     private MenuMapper menuMapper;
 
-    @Override
-    public void saveOrUpdate(Menu record) {
-        if (record.getId() == null) {
-            menuMapper.insert(record);
-        } else {
-            menuMapper.updateByPrimaryKey(record);
-        }
-    }
-
-    @Override
-    public Menu get(Long id) {
-        return menuMapper.selectByPrimaryKey(id);
-    }
-
-    @Override
-    public List<Menu> list() {
-        return menuMapper.selectAll();
-    }
 
     @Override
     public List<Menu> selectRootMenus() {
@@ -56,11 +38,12 @@ public class MenuServiceImpl implements IMenuService {
             //获取当前用户的菜单的id集合
             List<Long> ids = menuMapper.selectMenuByEmployeeId(user.getId());
             //从所有菜单中删除用户不该有的菜单
-            deleteNoPermissionMenu(menus,ids);
+            deleteNoPermissionMenu(menus, ids);
         }
         return menus;
     }
 
+    //从所有菜单中删除无权限菜单
     private void deleteNoPermissionMenu(List<Menu> menus, List<Long> ids) {
         //遍历菜单,删除用户无权访问的菜单
         Iterator<Menu> iterator = menus.iterator();

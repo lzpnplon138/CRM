@@ -8,11 +8,8 @@
 </head>
 <body>
 
+<%--数据表格--%>
 <table id="myDataGrid"></table>
-
-<div id="myToolbar">
-</div>
-
 
 </body>
 </html>

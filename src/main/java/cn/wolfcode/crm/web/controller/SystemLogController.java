@@ -17,11 +17,13 @@ public class SystemLogController {
     @Autowired
     private ISystemLogService systemLogService;
 
+    //系统日志视图
     @RequestMapping("/view")
     public String view() {
         return "systemLog";
     }
 
+    //系统日志分页数据
     @ResponseBody
     @RequestMapping("/query")
     public Object query(QueryObject qo) {

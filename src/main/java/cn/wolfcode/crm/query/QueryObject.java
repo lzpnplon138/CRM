@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 public class QueryObject {
     private int page = 1; //当前页
-    private int rows = 10; //pageSize
+    private int rows = 10; //页面容量
 
     public int getStart() {
         return (page - 1) * rows;

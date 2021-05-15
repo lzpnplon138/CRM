@@ -19,6 +19,7 @@ import java.util.List;
 public class PermissionServiceImpl implements IPermissionService {
     @Autowired
     private PermissionMapper permissionMapper;
+
     //RequestMappingHandlerMapping管理所有贴有RequestMapping注解的方法
     @Autowired
     private RequestMappingHandlerMapping rmhm;

@@ -14,29 +14,34 @@ public class PermissionController {
     @Autowired
     private IPermissionService permissionService;
 
+    //权限视图
     @RequestMapping("/view")
     public String view() {
         return "permission";
     }
 
+    //返回所有权限
     @ResponseBody
     @RequestMapping("/list")
     public Object list() {
         return permissionService.list();
     }
 
+    //权限分页数据
     @ResponseBody
     @RequestMapping("/query")
     public Object query(QueryObject qo) {
         return permissionService.query(qo);
     }
 
+    //返回该角色对应的权限
     @ResponseBody
     @RequestMapping("/selectByRoleId")
     public Object selectByRoleId(Long roleId) {
         return permissionService.selectByRoleId(roleId);
     }
 
+    //加载权限
     @ResponseBody
     @RequestMapping("/reload")
     public Object reload() {

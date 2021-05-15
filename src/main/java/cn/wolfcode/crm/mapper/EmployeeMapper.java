@@ -20,21 +20,41 @@ public interface EmployeeMapper {
 
     List<Employee> queryList(QueryObject qo);
 
+    /**
+     * 通过用户名查询对应员工对象
+     *
+     * @param username 用户名
+     * @return
+     */
     Employee selectByUsername(String username);
 
+    /**
+     * 改变员工状态(在职/离职)
+     *
+     * @param id 员工id
+     */
     void changeState(Long id);
 
     /**
      * 删除与role的关系
-     * @param employeeId
+     *
+     * @param employeeId 员工id
      */
     void deleteRelationWithRole(Long employeeId);
 
     /**
      * 新增与role的关系
-     * @param employeeId
-     * @param roleId
+     *
+     * @param employeeId 员工id
+     * @param roleId     角色id
      */
-    void insertRelationWithRole(@Param("employeeId") Long employeeId, @Param("roleId") Long roleId);
+    void insertRelationWithRole(@Param("employeeId") Long employeeId,
+                                @Param("roleId") Long roleId);
 
+    /**
+     * 查询所有符合条件的员工对象
+     * @param qo
+     * @return
+     */
+    List<Employee> selectAllByQuertyObject(QueryObject qo);
 }

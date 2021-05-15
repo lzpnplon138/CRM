@@ -33,7 +33,7 @@ public interface PermissionMapper {
 
     /**
      * 查询该员工的所有权限表达式
-     * @param id
+     * @param employeeId  员工id
      * @return
      */
     List<String> selectResourceByEmployeeId(Long employeeId);

@@ -12,7 +12,9 @@ import lombok.Setter;
 public class Permission {
     private Long id;
 
+    //权限表达式
     private String resource;
 
+    //权限名称
     private String name;
 }

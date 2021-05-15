@@ -16,22 +16,19 @@ public interface IDepartmentService {
     PageResult query(QueryObject qo);
 
     /**
-     * 验证部门名称是否存在
-     * @param name
+     * 编辑时,验证部门的名称
+     * 新增操作时不能与已有部门名称重复,
+     * 更新操作可以和原来的部门名称相同,但不能与其他已有部门名称相同
+     * @param name 部门名称
+     * @param id 部门id
      * @return
      */
     boolean validateName(String name,Long id);
 
     /**
-     * 改变员工状态
-     * @param id
+     * 改变部门状态(启用/禁用)
+     * @param id 部门id
      */
     void changeState(Long id);
 
-    /**
-     * 通过部门名称查询部门对象
-     * @param deptName 部门名称
-     * @return
-     */
-    Department selectByName(String deptName);
 }

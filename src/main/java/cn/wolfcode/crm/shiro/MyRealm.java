@@ -16,6 +16,7 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MyRealm extends AuthorizingRealm {
+
     @Autowired
     private IEmployeeService employeeService;
     @Autowired
@@ -28,8 +29,10 @@ public class MyRealm extends AuthorizingRealm {
         return "MyRealm";
     }
 
+    //授权
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+        //获取主身份信息
         Employee employee = (Employee) principals.getPrimaryPrincipal();
         Long id = employee.getId();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
@@ -46,10 +49,12 @@ public class MyRealm extends AuthorizingRealm {
         return info;
     }
 
+    //认证
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        //从数据库中查询用户
+        //从数据库中查询对应用户
         Employee employee = employeeService.selectByUsername((String) token.getPrincipal());
+        //如果存在该用户,则返回认证信息对象
         if (employee != null) {
             return new SimpleAuthenticationInfo(employee, employee.getPassword(),
                     ByteSource.Util.bytes(employee.getUsername()), getName());

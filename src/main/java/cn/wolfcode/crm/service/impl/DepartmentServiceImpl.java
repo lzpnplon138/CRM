@@ -20,7 +20,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
     @Override
     public void saveOrUpdate(Department record) {
         if (record.getId() == null) {
-            //保存
+            //新增
             record.setState(true);
             departmentMapper.insert(record);
         } else {
@@ -59,8 +59,4 @@ public class DepartmentServiceImpl implements IDepartmentService {
         departmentMapper.changeState(id);
     }
 
-    @Override
-    public Department selectByName(String deptName) {
-        return departmentMapper.selectByName(deptName);
-    }
 }

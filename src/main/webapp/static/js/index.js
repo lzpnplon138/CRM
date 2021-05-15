@@ -8,7 +8,7 @@
                 //判断选项卡是否已经存在,存在则选中,否则新增
                 if ($("#myTabs").tabs("exists",node.text)) {
                     //选中选项卡
-                    $("#myTabs").tabs("select",node.text)
+                    $("#myTabs").tabs("select",node.text);
                 } else {
                     //新增选项卡
                     $("#myTabs").tabs("add", {

@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="/static/css/reset.css">
     <link rel="stylesheet" href="/static/css/public.css">
     <%@include file="/static/common/common.jsp"%>
-
-
     <script src="/static/js/index.js"></script>
 </head>
 <body>

@@ -8,19 +8,23 @@
 </head>
 <body>
 
+<%--数据表格--%>
 <table id="myDataGrid"></table>
 
+<%--数据表格的工具栏--%>
 <div id="myToolbar">
     <a class="easyui-linkbutton" iconCls="icon-add" plain="true" data-cmd="add">新增</a>
     <a class="easyui-linkbutton" iconCls="icon-edit" plain="true" data-cmd="edit">编辑</a>
     <a id="state_btn" class="easyui-linkbutton" iconCls="icon-remove" plain="true" data-cmd="changeState">启动</a>
 </div>
 
+<%--对话框按钮--%>
 <div id="form_btns">
     <a class="easyui-linkbutton" iconCls="icon-save" plain="true" data-cmd="save">保存</a>
     <a class="easyui-linkbutton" iconCls="icon-cancel" plain="true" data-cmd="cancel">取消</a>
 </div>
 
+<%--对话框--%>
 <div id="myDialog">
     <form id="myForm" method="post">
         <input name="id" type="hidden" id="deptId">

@@ -15,6 +15,7 @@ import javax.servlet.ServletResponse;
 import java.io.IOException;
 
 public class MyAuthc extends FormAuthenticationFilter {
+
     //登陆成功后
     @Override
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {

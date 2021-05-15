@@ -8,8 +8,10 @@
 </head>
 <body>
 
+<%--数据表格--%>
 <table id="myDataGrid"></table>
 
+<%--数据表格的工具栏--%>
 <div id="myToolbar">
     <a class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="reload()">加载权限</a>
 </div>
