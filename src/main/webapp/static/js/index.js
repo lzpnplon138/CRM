@@ -9,6 +9,8 @@
                 if ($("#myTabs").tabs("exists",node.text)) {
                     //选中选项卡
                     $("#myTabs").tabs("select",node.text);
+                    /*//刷新
+                    $("#myTabs").tabs("getSelected").panel("refresh",node.url);*/
                 } else {
                     //新增选项卡
                     $("#myTabs").tabs("add", {
