@@ -6,11 +6,17 @@
             //动态加添选项卡
             if (node.url) {
                 //判断选项卡是否已经存在,存在则选中,否则新增
-                if ($("#myTabs").tabs("exists",node.text)) {
+                if ($("#myTabs").tabs("exists", node.text)) {
                     //选中选项卡
-                    $("#myTabs").tabs("select",node.text);
-                    /*//刷新
-                    $("#myTabs").tabs("getSelected").panel("refresh",node.url);*/
+                    $("#myTabs").tabs("select", node.text);
+                    //刷新
+                    var tab = $("#myTabs").tabs("getSelected");
+                    $("#myTabs").tabs("update",{
+                        tab:tab,
+                        options:{
+                            content: "<iframe src=" + node.url + " width='100%' height='100%' frameborder='0'></iframe>"
+                        }
+                    });
                 } else {
                     //新增选项卡
                     $("#myTabs").tabs("add", {
