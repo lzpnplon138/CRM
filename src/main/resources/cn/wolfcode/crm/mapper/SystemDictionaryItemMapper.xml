@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.wolfcode.crm.mapper.SystemDictionaryItemMapper">
+  <resultMap id="BaseResultMap" type="cn.wolfcode.crm.domain.SystemDictionaryItem">
+    <id column="id" property="id" />
+    <result column="name" property="name" />
+    <result column="intro" property="intro" />
+    <association property="parent" javaType="cn.wolfcode.crm.domain.SystemDictionary" columnPrefix="sd_">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+    </association>
+  </resultMap>
+  <delete id="deleteByPrimaryKey">
+    delete from systemdictionaryitem
+    where id = #{id}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" useGeneratedKeys="true">
+    insert into systemdictionaryitem (parent_id, name, intro)
+     values (#{parent.id}, #{name}, #{intro})
+  </insert>
+  <update id="updateByPrimaryKey" >
+    update systemdictionaryitem
+    set parent_id = #{parent.id},
+      name = #{name},
+      intro = #{intro}
+    where id = #{id}
+  </update>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    <include refid="base_column"/>
+    <include refid="base_table"/>
+    where sdi.id = #{id}
+  </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+      <include refid="base_column"/>
+      <include refid="base_table"/>
+  </select>
+
+    <sql id="base_column">
+         select sdi.id, sdi.name, sdi.intro,
+          sd.id sd_id , sd.name sd_name
+    </sql>
+    <sql id="base_table">
+        from systemdictionaryitem sdi join systemdictionary sd on sdi.parent_id = sd.id
+    </sql>
+
+    <select id="queryCount" resultType="int">
+        select count(sdi.id)
+        <include refid="base_table"/>
+        where sdi.parent_id = #{parentId}
+    </select>
+
+    <select id="queryList" resultMap="BaseResultMap">
+        <include refid="base_column"/>
+        <include refid="base_table"/>
+        where sdi.parent_id = #{parentId}
+        limit #{start},#{rows}
+    </select>
+</mapper>
